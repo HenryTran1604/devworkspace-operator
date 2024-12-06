@@ -1,0 +1,11 @@
+kind: DevWorkspaceOperatorConfig
+apiVersion: controller.devfile.io/v1alpha1
+metadata:
+  name: devworkspace-operator-config
+  namespace: {{ default "devworkspace-controller" .Values.namespace}}
+config:
+  routing:
+    clusterHostSuffix: {{ default "192.168.49.2.nip.io" .Values.routingSuffix}}
+    defaultRoutingClass: {{ default "basic" .Values.defaultRouting}}
+  workspace:
+    imagePullPolicy: {{ default "Always" .Values.pullPolicy}}

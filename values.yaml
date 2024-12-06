@@ -1,0 +1,4 @@
+namespace: devworkspace-controller
+routingSuffix: 192.168.49.2.nip.io
+defaultRouting: basic
+pullPolicy: IfNotPresent
