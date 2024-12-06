@@ -75,3 +75,12 @@ kubectl apply -f dw.yaml
 - Kết quả:
 ![cde](./images/cde.png)
 ![img](./images/image.png)
+
+# II. Cập nhật lại cấu trúc thư mục
+- Các custom-resource-definition được lưu trong [`crds`](./crds/)
+- Tách các RBAC và service vào các folder tương ứng
+  - edit-workspaces
+  - leader-election
+  - metrics
+  - proxy
+  - view-workspaces
