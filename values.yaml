@@ -1,4 +1,8 @@
 namespace: devworkspace-controller
 routingSuffix: 192.168.49.2.nip.io
 defaultRouting: basic
-pullPolicy: IfNotPresent
+image:
+  controller: quay.io/devfile/devworkspace-controller:next
+  kubeRbacProxy: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
+  projectClone: quay.io/devfile/project-clone:next
+  pullPolicy: IfNotPresent
