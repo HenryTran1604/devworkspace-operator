@@ -1,8 +1,190 @@
 namespace: devworkspace-controller
 routingSuffix: 192.168.49.2.nip.io
 defaultRouting: basic
+replicaCount: 1
 image:
-  controller: quay.io/devfile/devworkspace-controller:next
-  kubeRbacProxy: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
-  projectClone: quay.io/devfile/project-clone:next
+  repository: quay.io/devfile/devworkspace-controller
+  tag: "next"
+  containers:
+    args:
+    - /usr/local/bin/devworkspace-controller
+    - --enable-leader-election
+    - --metrics-addr=127.0.0.1:8080
+    env:
+    - name: WEBHOOK_SECRET_NAME
+      value: devworkspace-operator-webhook-cert
+    - name: RELATED_IMAGE_devworkspace_webhook_server
+      value: quay.io/devfile/devworkspace-controller:next
+    - name: RELATED_IMAGE_kube_rbac_proxy
+      value: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
+    - name: RELATED_IMAGE_project_clone
+      value: quay.io/devfile/project-clone:next
+    - name: WATCH_NAMESPACE
+      value: ""
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: OPERATOR_NAME
+      value: devworkspace-operator
+    - name: CONTROLLER_SERVICE_ACCOUNT_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.serviceAccountName
+    - name: MAX_CONCURRENT_RECONCILES
+      value: "5"
+    - name: WEBHOOKS_SERVER_MEMORY_LIMIT
+      value: 300Mi
+    - name: WEBHOOKS_SERVER_MEMORY_REQUEST
+      value: 20Mi
+    - name: WEBHOOKS_SERVER_CPU_LIMIT
+      value: 200m
+    - name: WEBHOOKS_SERVER_CPU_REQUEST
+      value: 100m
+    - name: RELATED_IMAGE_pvc_cleanup_job
+      value: registry.access.redhat.com/ubi8-micro:8.8-1
+    - name: RELATED_IMAGE_async_storage_server
+      value: quay.io/eclipse/che-workspace-data-sync-storage:0.0.1
+    - name: RELATED_IMAGE_async_storage_sidecar
+      value: quay.io/eclipse/che-sidecar-workspace-data-sync:0.0.1
+  pullPolicy: IfNotPresent
+
+# This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+# This is to override the chart name.
+nameOverride: "devworkspace-controller"
+fullnameOverride: ""
+
+#This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "devworkspace-controller-serviceaccount"
+
+# This is for setting Kubernetes Annotations to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/ 
+podAnnotations: {}
+# This is for setting Kubernetes Labels to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
+service:
+  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+  type: ClusterIP
+  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+  port: 80
+  conversionPort: 9443
+  livenessPort: 6789
+
+# This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
+ingress:
+  enabled: true
+  className: ""
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 3000m
+    memory: 5Gi
+  requests:
+    cpu: 250m
+    memory: 100Mi
+
+# The number of seconds to allow for graceful termination of the pod. Optional.
+terminationGracePeriodSeconds: 10
+serviceAccountName: devworkspace-controller-serviceaccount
+
+# This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+livenessProbe:
+  failureThreshold: 5
+  httpGet:
+    path: /healthz
+    port: liveness-port
+    scheme: HTTP
+  initialDelaySeconds: 15
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 5
+readinessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /readyz
+    port: liveness-port
+    scheme: HTTP
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 5
+
+#This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+# Additional volumes on the output Deployment definition.
+volumes:
+- name: webhook-tls-certs
+  secret:
+    defaultMode: 420
+    secretName: devworkspace-operator-webhook-cert
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts:
+- mountPath: /tmp/k8s-webhook-server/serving-certs
+  name: webhook-tls-certs
+  readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+
+proxy:
+  repository: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
+  name: kube-rbac-proxy
+  tag: "" 
+  containerPort: 8443
+  args:
+  - --secure-listen-address=0.0.0.0:8443
+  - --upstream=http://127.0.0.1:8080/
+  - --logtostderr=true
+  - --v=10
   pullPolicy: IfNotPresent
