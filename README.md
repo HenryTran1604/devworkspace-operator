@@ -22,7 +22,7 @@ helm create devworkspace
 > Trong đó, [`combined.yaml`](https://github.com/devfile/devworkspace-operator/blob/main/deploy/deployment/kubernetes/combined.yaml) chứa tất cả các định nghĩa crds, deployments, và service. Và [`default-config.yaml`](https://github.com/devfile/devworkspace-operator/blob/main/deploy/default-config.yaml) chứa thông tin cấu hình.
 - file `values.yaml`
 ```yml
-namespace: devworkspace-controller
+
 routingSuffix: 192.168.49.2.nip.io
 defaultRouting: basic
 pullPolicy: IfNotPresent

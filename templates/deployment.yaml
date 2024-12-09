@@ -4,7 +4,7 @@ metadata:
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
   name: {{ .Values.namespace }}-manager
-  namespace: {{ .Values.namespace }}
+  
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -73,7 +73,7 @@ spec:
         ports:
         - containerPort: {{ .Values.proxy.containerPort }}
           name: metrics
-      serviceAccountName: {{ .Values.serviceAccountName }}
+      serviceAccountName: {{ .Values.serviceAccount.name }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- with .Values.volumes }}
       volumes:

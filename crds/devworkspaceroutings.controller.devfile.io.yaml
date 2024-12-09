@@ -5,8 +5,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.6.1
   creationTimestamp: null
   labels:
-    app.kubernetes.io/name: devworkspace-controller
-    app.kubernetes.io/part-of: devworkspace-operator
+    {{- include "devworkspace-operator.labels" . | nindent 4 }}
   name: devworkspaceroutings.controller.devfile.io
 spec:
   group: controller.devfile.io

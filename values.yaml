@@ -1,6 +1,6 @@
-namespace: devworkspace-controller
-routingSuffix: 192.168.49.2.nip.io
+routingSuffix: example.com
 defaultRouting: basic
+installCRDs: true
 replicaCount: 1
 image:
   repository: quay.io/devfile/devworkspace-controller
@@ -67,23 +67,6 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: "devworkspace-controller-serviceaccount"
 
-# This is for setting Kubernetes Annotations to a Pod.
-# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/ 
-podAnnotations: {}
-# This is for setting Kubernetes Labels to a Pod.
-# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-podLabels: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
 
 # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
 service:
@@ -94,22 +77,6 @@ service:
   conversionPort: 9443
   livenessPort: 6789
 
-# This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
-ingress:
-  enabled: true
-  className: ""
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
 
 resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -125,7 +92,6 @@ resources:
 
 # The number of seconds to allow for graceful termination of the pod. Optional.
 terminationGracePeriodSeconds: 10
-serviceAccountName: devworkspace-controller-serviceaccount
 
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
@@ -169,12 +135,6 @@ volumeMounts:
 - mountPath: /tmp/k8s-webhook-server/serving-certs
   name: webhook-tls-certs
   readOnly: true
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
 
 
 proxy:
