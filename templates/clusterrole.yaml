@@ -4,7 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
-  name: devworkspace-controller-role
+  name: {{ include "devworkspace-operator.name" . }}-role
 rules:
 - apiGroups:
   - ""

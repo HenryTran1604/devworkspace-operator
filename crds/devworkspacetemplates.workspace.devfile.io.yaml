@@ -4,7 +4,8 @@ metadata:
   annotations:
     cert-manager.io/inject-ca-from: devworkspace-controller/devworkspace-controller-serving-cert
   labels:
-    {{- include "devworkspace-operator.labels" . | nindent 4 }}
+    app.kubernetes.io/name: devworkspace-controller
+    app.kubernetes.io/part-of: devworkspace-operator
   name: devworkspacetemplates.workspace.devfile.io
 spec:
   conversion:
@@ -13,7 +14,7 @@ spec:
       clientConfig:
         service:
           name: devworkspace-controller-manager-service
-          
+          namespace: devworkspace-controller
           path: /convert
           port: 443
       conversionReviewVersions:

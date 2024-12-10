@@ -3,7 +3,7 @@ kind: Certificate
 metadata:
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
-  name: devworkspace-controller-serving-cert
+  name: {{ include "devworkspace-operator.name" . }}-serving-cert
   
 spec:
   dnsNames:
@@ -13,5 +13,5 @@ spec:
   - devworkspace-controller-manager-service.devworkspace-controller.svc.cluster.local
   issuerRef:
     kind: Issuer
-    name: devworkspace-controller-selfsigned-issuer
+    name: {{ include "devworkspace-operator.name" . }}-selfsigned-issuer
   secretName: devworkspace-operator-webhook-cert

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
-  name: {{ .Values.namespace }}-manager
+  name: {{ template "devworkspace-operator.name" . }}-manager
   
 spec:
   {{- if not .Values.autoscaling.enabled }}
@@ -32,11 +32,11 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
       - args:
-        {{- range .Values.image.containers.args }}
+        {{- range .Values.container.args }}
         - {{ . }}
         {{- end }}
         env:
-        {{- range .Values.image.containers.env }}
+        {{- range .Values.container.env }}
         - name: {{ .name }}
           {{- if .value }}
           value: {{ .value | quote }}
@@ -65,13 +65,13 @@ spec:
           {{- toYaml . | nindent 12 }}
         {{- end }}
       - args:
-      {{- range .Values.proxy.args }}
+      {{- range .Values.container.proxy.args }}
         - {{ . }}
       {{- end }}
-        name: {{ .Values.proxy.name }}
-        image: {{ .Values.proxy.repository}}
+        name: {{ .Values.image.proxy.name }}
+        image: {{ .Values.image.proxy.repository}}
         ports:
-        - containerPort: {{ .Values.proxy.containerPort }}
+        - containerPort: {{ .Values.container.proxy.containerPort }}
           name: metrics
       serviceAccountName: {{ .Values.serviceAccount.name }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}

@@ -11,3 +11,4 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: {{ include "devworkspace-operator.serviceAccountName" .}}
+  namespace: {{ include "devworkspace-operator.namespace" . }}

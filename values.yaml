@@ -2,58 +2,80 @@ routingSuffix: example.com
 defaultRouting: basic
 installCRDs: true
 replicaCount: 1
+
 image:
   repository: quay.io/devfile/devworkspace-controller
   tag: "next"
-  containers:
-    args:
-    - /usr/local/bin/devworkspace-controller
-    - --enable-leader-election
-    - --metrics-addr=127.0.0.1:8080
-    env:
-    - name: WEBHOOK_SECRET_NAME
-      value: devworkspace-operator-webhook-cert
-    - name: RELATED_IMAGE_devworkspace_webhook_server
-      value: quay.io/devfile/devworkspace-controller:next
-    - name: RELATED_IMAGE_kube_rbac_proxy
-      value: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
-    - name: RELATED_IMAGE_project_clone
-      value: quay.io/devfile/project-clone:next
-    - name: WATCH_NAMESPACE
-      value: ""
-    - name: POD_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.name
-    - name: OPERATOR_NAME
-      value: devworkspace-operator
-    - name: CONTROLLER_SERVICE_ACCOUNT_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: spec.serviceAccountName
-    - name: MAX_CONCURRENT_RECONCILES
-      value: "5"
-    - name: WEBHOOKS_SERVER_MEMORY_LIMIT
-      value: 300Mi
-    - name: WEBHOOKS_SERVER_MEMORY_REQUEST
-      value: 20Mi
-    - name: WEBHOOKS_SERVER_CPU_LIMIT
-      value: 200m
-    - name: WEBHOOKS_SERVER_CPU_REQUEST
-      value: 100m
-    - name: RELATED_IMAGE_pvc_cleanup_job
-      value: registry.access.redhat.com/ubi8-micro:8.8-1
-    - name: RELATED_IMAGE_async_storage_server
-      value: quay.io/eclipse/che-workspace-data-sync-storage:0.0.1
-    - name: RELATED_IMAGE_async_storage_sidecar
-      value: quay.io/eclipse/che-sidecar-workspace-data-sync:0.0.1
   pullPolicy: IfNotPresent
+
+
+  proxy:
+    repository: gcr.io/kubebuilder/kube-rbac-proxy
+    name: kube-rbac-proxy
+    tag: "v0.13.1" 
+    pullPolicy: IfNotPresent
+
+container:
+  args:
+  - /usr/local/bin/devworkspace-controller
+  - --enable-leader-election
+  - --metrics-addr=127.0.0.1:8080
+  env:
+  - name: WEBHOOK_SECRET_NAME
+    value: devworkspace-operator-webhook-cert
+  - name: RELATED_IMAGE_devworkspace_webhook_server
+    value: quay.io/devfile/devworkspace-controller:next
+  - name: RELATED_IMAGE_kube_rbac_proxy
+    value: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
+  - name: RELATED_IMAGE_project_clone
+    value: quay.io/devfile/project-clone:next
+  - name: WATCH_NAMESPACE
+    value: ""
+  - name: POD_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: OPERATOR_NAME
+    value: devworkspace-operator
+  - name: CONTROLLER_SERVICE_ACCOUNT_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: spec.serviceAccountName
+  - name: MAX_CONCURRENT_RECONCILES
+    value: "5"
+  - name: WEBHOOKS_SERVER_MEMORY_LIMIT
+    value: 300Mi
+  - name: WEBHOOKS_SERVER_MEMORY_REQUEST
+    value: 20Mi
+  - name: WEBHOOKS_SERVER_CPU_LIMIT
+    value: 200m
+  - name: WEBHOOKS_SERVER_CPU_REQUEST
+    value: 100m
+  - name: RELATED_IMAGE_pvc_cleanup_job
+    value: registry.access.redhat.com/ubi8-micro:8.8-1
+  - name: RELATED_IMAGE_async_storage_server
+    value: quay.io/eclipse/che-workspace-data-sync-storage:0.0.1
+  - name: RELATED_IMAGE_async_storage_sidecar
+    value: quay.io/eclipse/che-sidecar-workspace-data-sync:0.0.1
+  
+  proxy: 
+    containerPort: 8443
+    args:
+    - --secure-listen-address=0.0.0.0:8443
+    - --upstream=http://127.0.0.1:8080/
+    - --logtostderr=true
+    - --v=10
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
 # This is to override the chart name.
 nameOverride: "devworkspace-controller"
 fullnameOverride: ""
+
+
+## Override the deployment namespace
+##
+namespaceOverride: ""
 
 #This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
@@ -135,16 +157,3 @@ volumeMounts:
 - mountPath: /tmp/k8s-webhook-server/serving-certs
   name: webhook-tls-certs
   readOnly: true
-
-
-proxy:
-  repository: gcr.io/kubebuilder/kube-rbac-proxy:v0.13.1
-  name: kube-rbac-proxy
-  tag: "" 
-  containerPort: 8443
-  args:
-  - --secure-listen-address=0.0.0.0:8443
-  - --upstream=http://127.0.0.1:8080/
-  - --logtostderr=true
-  - --v=10
-  pullPolicy: IfNotPresent

@@ -3,7 +3,7 @@ kind: Issuer
 metadata:
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
-  name: devworkspace-controller-selfsigned-issuer
+  name: {{ include "devworkspace-operator.name" . }}-selfsigned-issuer
   
 spec:
   selfSigned: {}
