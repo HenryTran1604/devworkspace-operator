@@ -3,7 +3,7 @@ kind: Role
 metadata:
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
-  name: devworkspace-controller-leader-election-role
+  name: {{ include "devworkspace-operator.name" . }}-leader-election-role
   
 rules:
 - apiGroups:

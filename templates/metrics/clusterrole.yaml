@@ -3,7 +3,7 @@ kind: ClusterRole
 metadata:
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
-  name: devworkspace-controller-metrics-reader
+  name: {{ include "devworkspace-operator.name" . }}-metrics-reader
 rules:
 - nonResourceURLs:
   - /metrics

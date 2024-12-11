@@ -3,12 +3,12 @@ kind: RoleBinding
 metadata:
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
-  name: devworkspace-controller-leader-election-rolebinding
+  name: {{ include "devworkspace-operator.name" . }}-leader-election-rolebinding
   
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: devworkspace-controller-leader-election-role
+  name: {{ include "devworkspace-operator.name" . }}-leader-election-role
 subjects:
 - kind: ServiceAccount
   name: {{ include "devworkspace-operator.serviceAccountName" . }}

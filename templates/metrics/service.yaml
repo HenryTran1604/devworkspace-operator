@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
-  name: devworkspace-controller-metrics
+  name: {{ include "devworkspace-operator.name" . }}-metrics
   
 spec:
   ports:

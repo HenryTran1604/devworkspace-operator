@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
-  name: {{ template "devworkspace-operator.name" . }}-manager
+  name: {{ include "devworkspace-operator.name" . }}-manager
   
 spec:
   {{- if not .Values.autoscaling.enabled }}
@@ -69,7 +69,7 @@ spec:
         - {{ . }}
       {{- end }}
         name: {{ .Values.image.proxy.name }}
-        image: {{ .Values.image.proxy.repository}}
+        image: "{{ .Values.image.proxy.repository}}:{{ .Values.image.proxy.tag | default "latest" }}"
         ports:
         - containerPort: {{ .Values.container.proxy.containerPort }}
           name: metrics

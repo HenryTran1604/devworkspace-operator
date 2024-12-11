@@ -12,7 +12,7 @@ image:
   proxy:
     repository: gcr.io/kubebuilder/kube-rbac-proxy
     name: kube-rbac-proxy
-    tag: "v0.13.1" 
+    tag: "v0.13.1"
     pullPolicy: IfNotPresent
 
 container:

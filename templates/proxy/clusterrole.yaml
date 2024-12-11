@@ -3,7 +3,7 @@ kind: ClusterRole
 metadata:
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
-  name: devworkspace-controller-proxy-role
+  name: {{ include "devworkspace-operator.name" . }}-proxy-role
 rules:
 - apiGroups:
   - authentication.k8s.io

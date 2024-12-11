@@ -4,7 +4,7 @@ metadata:
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
     rbac.authorization.k8s.io/aggregate-to-edit: "true"
-  name: devworkspace-controller-edit-workspaces
+  name: {{ include "devworkspace-operator.name" . }}-edit-workspaces
 rules:
 - apiGroups:
   - workspace.devfile.io

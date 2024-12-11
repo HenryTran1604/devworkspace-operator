@@ -3,11 +3,11 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     {{- include "devworkspace-operator.labels" . | nindent 4 }}
-  name: devworkspace-controller-proxy-rolebinding
+  name: {{ include "devworkspace-operator.name" . }}-proxy-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: devworkspace-controller-proxy-role
+  name: {{ include "devworkspace-operator.name" . }}-proxy-role
 subjects:
 - kind: ServiceAccount
   name: {{ include "devworkspace-operator.serviceAccountName" .}}
