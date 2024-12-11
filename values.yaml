@@ -1,5 +1,3 @@
-routingSuffix: example.com
-defaultRouting: basic
 installCRDs: true
 replicaCount: 1
 
