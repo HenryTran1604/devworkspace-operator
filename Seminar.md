@@ -105,7 +105,14 @@ config:
    ```
 
 ### 4. **DevWorkspaceRouting**
+DevWorkspaceRouting được thiết kế để quản lý và định tuyến các yêu cầu đến các DevWorkspaces. Cụ thể:
+  - Định tuyến Yêu cầu: DevWorkspaceRouting cho phép định tuyến các yêu cầu (request) từ bên ngoài vào các DevWorkspace tương ứng, đảm bảo rằng mỗi yêu cầu được chuyển đến đúng dịch vụ hoặc ứng dụng.
+  - Quản lý Tên miền và URL: Nó cho phép cấu hình tên miền và URL cho từng DevWorkspace, giúp người dùng dễ dàng truy cập vào môi trường phát triển của mình thông qua các địa chỉ dễ nhớ.
+  - Hỗ trợ Nhiều Môi Trường: DevWorkspaceRouting có thể được sử dụng để định tuyến đến nhiều môi trường phát triển khác nhau trong cùng một cluster Kubernetes, giúp người dùng có thể thử nghiệm hoặc phát triển nhiều dự án cùng lúc.
+  - Tính Linh Hoạt và Tùy Chỉnh: Người dùng có thể tùy chỉnh các quy tắc định tuyến để phù hợp với nhu cầu cụ thể của dự án hoặc tổ chức, bao gồm việc định tuyến theo địa chỉ IP, tên người dùng, hoặc các tham số khác.
+  - Tích hợp với Các Dịch Vụ Khác: DevWorkspaceRouting có thể tích hợp với các dịch vụ khác trong Kubernetes, như ingress controllers, để cải thiện khả năng quản lý và bảo mật trong việc truy cập các DevWorkspaces.
 
+Tóm lại, DevWorkspaceRouting giúp đơn giản hóa việc truy cập và quản lý các DevWorkspaces, cải thiện trải nghiệm phát triển và hỗ trợ việc phát triển đồng thời nhiều dự án trong môi trường Kubernetes.
 ### Tóm tắt nhiệm vụ của các CRs:
 1. **DevWorkspace**: Định nghĩa môi trường phát triển cho người dùng.
 2. **DevWorkspaceTemplate**: Cung cấp mẫu DevWorkspace có thể tái sử dụng.
